@@ -1,7 +1,9 @@
 import { Share2, CheckCircle2, Brain, Shield, ShieldCheck, Lock, Mic } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import aiHead from "@/assets/ai-head.png";
 
 const Index = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto">
       {/* Header */}
