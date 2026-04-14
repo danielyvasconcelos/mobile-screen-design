@@ -98,7 +98,11 @@ const Identificacao = () => {
         <div className="flex-1" />
 
         {/* CTA */}
-        <button className="w-full bg-primary text-primary-foreground font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform mt-6">
+        <button
+          disabled={cpf.replace(/\D/g, "").length === 0}
+          onClick={() => navigate("/triagem")}
+          className="w-full bg-primary text-primary-foreground font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform mt-6 disabled:opacity-40 disabled:pointer-events-none"
+        >
           Verificar Dados <ArrowRight className="w-5 h-5" />
         </button>
 
