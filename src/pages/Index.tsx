@@ -72,7 +72,7 @@ const Index = () => {
 
       {/* CTA */}
       <div className="px-4 pt-4 pb-6">
-        <button className="w-full bg-primary text-primary-foreground font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+        <button onClick={() => navigate("/identificacao")} className="w-full bg-primary text-primary-foreground font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
           Aceitar e Iniciar <span aria-hidden>→</span>
         </button>
         <p className="text-[10px] text-muted-foreground text-center mt-3">
