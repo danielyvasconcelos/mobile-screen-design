@@ -41,16 +41,16 @@ const Historico = () => {
         </div>
 
         {/* Classification Card */}
-        <div className="bg-card rounded-xl border-l-4 border-green-600 shadow-sm p-5 space-y-4">
+        <div className="bg-card rounded-xl border-l-4 shadow-sm p-5 space-y-4" style={{ borderLeftColor: "hsl(142 72% 35%)" }}>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-green-600 flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-5 h-5 text-white" strokeWidth={3} />
+            <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "hsl(142 72% 35%)" }}>
+              <CheckCircle2 className="w-5 h-5 text-primary-foreground" strokeWidth={3} />
             </div>
             <span className="text-sm font-semibold text-foreground">Sua classificação é:</span>
           </div>
 
-          <div className="bg-green-200 rounded-lg px-4 py-3">
-            <p className="text-xl font-bold text-green-900">VERDE (Pouco Urgente)</p>
+          <div className="rounded-lg px-4 py-3" style={{ backgroundColor: "hsl(142 70% 80%)" }}>
+            <p className="text-xl font-bold" style={{ color: "hsl(142 72% 20%)" }}>VERDE (Pouco Urgente)</p>
           </div>
 
           <p className="text-sm text-muted-foreground leading-relaxed">
