@@ -106,7 +106,7 @@ const Historico = () => {
               <span>Av. da Saúde, 450 - Centro</span>
             </div>
           </div>
-          <button className="w-full bg-muted hover:bg-muted/70 transition-colors rounded-lg py-2.5 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
+          <button onClick={() => navigate("/suporte")} className="w-full bg-muted hover:bg-muted/70 transition-colors rounded-lg py-2.5 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
             <Map className="w-4 h-4" />
             Ver no Mapa
           </button>
@@ -115,11 +115,11 @@ const Historico = () => {
         {/* Support */}
         <div className="bg-card rounded-xl border border-border p-4 space-y-3">
           <h3 className="text-sm font-bold text-foreground">Suporte Imediato</h3>
-          <button className="w-full bg-primary hover:bg-primary/90 transition-colors rounded-lg py-3 flex items-center justify-center gap-2 text-sm font-semibold text-primary-foreground">
+          <button onClick={() => navigate("/suporte")} className="w-full bg-primary hover:bg-primary/90 transition-colors rounded-lg py-3 flex items-center justify-center gap-2 text-sm font-semibold text-primary-foreground">
             <MessageSquare className="w-4 h-4" />
             Falar com Suporte
           </button>
-          <button className="w-full bg-muted hover:bg-muted/70 transition-colors rounded-lg py-3 flex items-center justify-center gap-2 text-sm font-semibold text-foreground">
+          <button onClick={() => navigate("/suporte")} className="w-full bg-muted hover:bg-muted/70 transition-colors rounded-lg py-3 flex items-center justify-center gap-2 text-sm font-semibold text-foreground">
             <Phone className="w-4 h-4" />
             Ligar para Central
           </button>
