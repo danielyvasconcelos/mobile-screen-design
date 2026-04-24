@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Share2, CheckCircle2, User, Users, Info, Copy, ArrowRight } from "lucide-react";
+import { Share2, CheckCircle2, User, Users, Info, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Identificacao = () => {
@@ -78,12 +78,6 @@ const Identificacao = () => {
               placeholder="000.000.000-00"
               className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted-foreground/40 outline-none font-medium"
             />
-            <button
-              onClick={() => navigator.clipboard?.readText().then((t) => setCpf(formatCpf(t)))}
-              className="text-muted-foreground/50"
-            >
-              <Copy className="w-5 h-5" />
-            </button>
           </div>
 
           {/* Info */}
@@ -105,11 +99,6 @@ const Identificacao = () => {
         >
           Verificar Dados <ArrowRight className="w-5 h-5" />
         </button>
-
-        <p className="text-xs text-muted-foreground text-center mt-3">
-          Esqueceu seu número?{" "}
-          <a href="#" className="text-primary underline font-medium">Buscar por dados pessoais</a>
-        </p>
       </div>
     </div>
   );

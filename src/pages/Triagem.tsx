@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Share2, CheckCircle2, Camera, FileText, Plus, Smile, Send, BotMessageSquare, History, HeadsetIcon } from "lucide-react";
 
+
 interface Message {
   id: number;
   text: string;
@@ -27,7 +28,7 @@ const Triagem = () => {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [activeTab, setActiveTab] = useState<"triage" | "estory" | "support">("triage");
+  const [activeTab, setActiveTab] = useState<"triagem" | "historico">("triagem");
 
   const quickReplies = ["Começou hoje", "Muitos dias", "Não tenho certeza", "🎙 Desejo falar"];
 
@@ -167,22 +168,22 @@ const Triagem = () => {
       {/* Bottom Tab Bar */}
       <nav className="flex items-center justify-around py-2 bg-card border-t border-border">
         <button
-          onClick={() => setActiveTab("triage")}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${activeTab === "triage" ? "text-primary" : "text-muted-foreground"}`}
+          onClick={() => setActiveTab("triagem")}
+          className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${activeTab === "triagem" ? "text-primary" : "text-muted-foreground"}`}
         >
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "triage" ? "bg-primary text-primary-foreground" : ""}`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "triagem" ? "bg-primary text-primary-foreground" : ""}`}>
             <BotMessageSquare className="w-5 h-5" />
           </div>
           Triagem
         </button>
         <button
           onClick={() => {
-            setActiveTab("estory");
+            setActiveTab("historico");
             navigate("/historico");
           }}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${activeTab === "estory" ? "text-primary" : "text-muted-foreground"}`}
+          className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${activeTab === "historico" ? "text-primary" : "text-muted-foreground"}`}
         >
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "estory" ? "bg-primary text-primary-foreground" : ""}`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "historico" ? "bg-primary text-primary-foreground" : ""}`}>
             <History className="w-5 h-5" />
           </div>
           Histórico

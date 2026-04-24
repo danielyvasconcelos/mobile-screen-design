@@ -1,6 +1,5 @@
 import { Share2, CheckCircle2, Brain, Shield, ShieldCheck, Lock, Mic } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import aiHead from "@/assets/ai-head.png";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -15,9 +14,6 @@ const Index = () => {
 
       {/* Hero */}
       <div className="flex flex-col items-center px-6 pt-2 pb-4">
-        <div className="w-36 h-36 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4">
-          <img src={aiHead} alt="IA de Triagem" width={120} height={120} className="object-contain" />
-        </div>
         <h2 className="text-2xl font-extrabold text-foreground text-center leading-tight">
           Bem-vindo à sua<br />Triagem Digital
         </h2>

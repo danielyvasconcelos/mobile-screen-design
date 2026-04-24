@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# SUSy - ChatBot de Triagem
 
-TODO: Document your project here
+Aplicacao frontend em React + Vite para demonstracao de um fluxo de triagem digital.
