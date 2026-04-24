@@ -112,13 +112,13 @@ const Triagem = () => {
             Você pode enviar fotos de manchas na pele ou exames anteriores.
           </p>
           <div className="flex justify-center gap-6 mt-3">
-            <button className="flex flex-col items-center gap-1 text-primary">
+            <button onClick={() => navigate("/suporte")} className="flex flex-col items-center gap-1 text-primary">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Camera className="w-5 h-5" />
               </div>
               <span className="text-[10px] font-semibold uppercase">Câmera</span>
             </button>
-            <button className="flex flex-col items-center gap-1 text-primary">
+            <button onClick={() => navigate("/suporte")} className="flex flex-col items-center gap-1 text-primary">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <FileText className="w-5 h-5" />
               </div>
