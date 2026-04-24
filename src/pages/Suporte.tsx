@@ -14,7 +14,7 @@ const Suporte = () => {
           <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
             <Stethoscope className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="text-sm font-bold text-primary">Clinical Sanctuary</span>
+          <span className="text-sm font-bold text-primary">SUSy - ChatBot de Triagem</span>
         </div>
         <Shield className="w-5 h-5 text-primary" />
       </header>
@@ -42,7 +42,7 @@ const Suporte = () => {
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "triage" ? "bg-primary text-primary-foreground" : ""}`}>
             <BotMessageSquare className="w-5 h-5" />
           </div>
-          Triage
+          Triagem
         </button>
         <button
           onClick={() => {
@@ -54,7 +54,7 @@ const Suporte = () => {
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "history" ? "bg-primary text-primary-foreground" : ""}`}>
             <History className="w-5 h-5" />
           </div>
-          History
+          Histórico
         </button>
         <button
           onClick={() => setActiveTab("support")}
@@ -63,7 +63,7 @@ const Suporte = () => {
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "support" ? "bg-primary text-primary-foreground" : ""}`}>
             <HeadsetIcon className="w-5 h-5" />
           </div>
-          Support
+          Suporte
         </button>
       </nav>
     </div>
