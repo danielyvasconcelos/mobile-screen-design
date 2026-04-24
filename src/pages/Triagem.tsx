@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Share2, CheckCircle2, Camera, FileText, Mic, Plus, Smile, Send, BotMessageSquare, BookOpen, HeadsetIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Share2, CheckCircle2, Camera, FileText, Plus, Smile, Send, BotMessageSquare, History, HeadsetIcon } from "lucide-react";
 
 interface Message {
   id: number;
