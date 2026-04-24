@@ -109,8 +109,10 @@ const navItems = [
 ] as const;
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState<string>("dashboard");
   const [search, setSearch] = useState("");
+  const goWip = () => navigate("/em-desenvolvimento");
 
   const filteredPatients = patients.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()),
