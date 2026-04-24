@@ -28,7 +28,7 @@ const Triagem = () => {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [activeTab, setActiveTab] = useState<"triagem" | "historico">("triagem");
+  const [activeTab, setActiveTab] = useState<"triagem" | "historico" | "support">("triagem");
 
   const quickReplies = ["Começou hoje", "Muitos dias", "Não tenho certeza", "🎙 Desejo falar"];
 
