@@ -150,7 +150,10 @@ const Historico = () => {
           History
         </button>
         <button
-          onClick={() => setActiveTab("support")}
+          onClick={() => {
+            setActiveTab("support");
+            navigate("/suporte");
+          }}
           className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${activeTab === "support" ? "text-primary" : "text-muted-foreground"}`}
         >
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "support" ? "bg-primary text-primary-foreground" : ""}`}>
