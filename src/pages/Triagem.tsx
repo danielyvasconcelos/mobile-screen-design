@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Share2, CheckCircle2, Camera, FileText, Mic, Plus, Smile, Send, BotMessageSquare, BookOpen, HeadsetIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Share2, CheckCircle2, Camera, FileText, Plus, Smile, Send, BotMessageSquare, History, HeadsetIcon } from "lucide-react";
 
 interface Message {
   id: number;
@@ -9,6 +10,7 @@ interface Message {
 }
 
 const Triagem = () => {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -174,13 +176,16 @@ const Triagem = () => {
           Triage
         </button>
         <button
-          onClick={() => setActiveTab("estory")}
+          onClick={() => {
+            setActiveTab("estory");
+            navigate("/historico");
+          }}
           className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${activeTab === "estory" ? "text-primary" : "text-muted-foreground"}`}
         >
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "estory" ? "bg-primary text-primary-foreground" : ""}`}>
-            <BookOpen className="w-5 h-5" />
+            <History className="w-5 h-5" />
           </div>
-          eStory
+          History
         </button>
         <button
           onClick={() => setActiveTab("support")}
