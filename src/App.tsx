@@ -8,6 +8,7 @@ import Identificacao from "./pages/Identificacao.tsx";
 import Triagem from "./pages/Triagem.tsx";
 import Historico from "./pages/Historico.tsx";
 import Suporte from "./pages/Suporte.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/triagem" element={<Triagem />} />
           <Route path="/historico" element={<Historico />} />
           <Route path="/suporte" element={<Suporte />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
