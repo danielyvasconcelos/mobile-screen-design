@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -137,7 +138,10 @@ const Dashboard = () => {
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveNav(item.id)}
+                  onClick={() => {
+                    setActiveNav(item.id);
+                    if (item.id !== "dashboard") navigate("/em-desenvolvimento");
+                  }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
                     isActive
                       ? "bg-primary/10 text-primary"
@@ -183,10 +187,10 @@ const Dashboard = () => {
               <ShieldCheck className="w-3.5 h-3.5" />
               AMBIENTE SEGURO
             </div>
-            <button className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
+            <button onClick={goWip} className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
               <Bell className="w-4 h-4" />
             </button>
-            <button className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
+            <button onClick={goWip} className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
               <UserCircle className="w-5 h-5" />
             </button>
           </div>
@@ -198,7 +202,7 @@ const Dashboard = () => {
             <AlertOctagon className="w-4 h-4" />
             1 Paciente de risco vermelho detectado em um raio de 5km.
           </div>
-          <button className="text-xs font-bold underline underline-offset-2 hover:no-underline">
+          <button onClick={goWip} className="text-xs font-bold underline underline-offset-2 hover:no-underline">
             INITIALIZE ER RESPONSE
           </button>
         </div>
@@ -367,7 +371,7 @@ const Dashboard = () => {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button size="sm" className="h-9 px-4 text-xs font-bold">
+                        <Button onClick={goWip} size="sm" className="h-9 px-4 text-xs font-bold">
                           Resumo da
                           <br />
                           Anamnese
@@ -381,10 +385,10 @@ const Dashboard = () => {
 
             {/* Pagination */}
             <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border">
-              <button className="w-8 h-8 rounded-full border border-border hover:bg-muted flex items-center justify-center text-muted-foreground">
+              <button onClick={goWip} className="w-8 h-8 rounded-full border border-border hover:bg-muted flex items-center justify-center text-muted-foreground">
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button className="w-8 h-8 rounded-full border border-border hover:bg-muted flex items-center justify-center text-muted-foreground">
+              <button onClick={goWip} className="w-8 h-8 rounded-full border border-border hover:bg-muted flex items-center justify-center text-muted-foreground">
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
