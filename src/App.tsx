@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import Identificacao from "./pages/Identificacao.tsx";
 import Triagem from "./pages/Triagem.tsx";
 import Historico from "./pages/Historico.tsx";
+import Suporte from "./pages/Suporte.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
