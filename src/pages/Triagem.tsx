@@ -173,7 +173,7 @@ const Triagem = () => {
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "triage" ? "bg-primary text-primary-foreground" : ""}`}>
             <BotMessageSquare className="w-5 h-5" />
           </div>
-          Triage
+          Triagem
         </button>
         <button
           onClick={() => {
@@ -185,7 +185,7 @@ const Triagem = () => {
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "estory" ? "bg-primary text-primary-foreground" : ""}`}>
             <History className="w-5 h-5" />
           </div>
-          History
+          Histórico
         </button>
         <button
           onClick={() => {
@@ -197,7 +197,7 @@ const Triagem = () => {
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === "support" ? "bg-primary text-primary-foreground" : ""}`}>
             <HeadsetIcon className="w-5 h-5" />
           </div>
-          Support
+          Suporte
         </button>
       </nav>
     </div>
