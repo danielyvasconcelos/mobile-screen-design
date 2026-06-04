@@ -28,9 +28,56 @@ const Triagem = () => {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [step, setStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"triagem" | "historico" | "support">("triagem");
 
-  const quickReplies = ["Começou hoje", "Muitos dias", "Não tenho certeza", "🎙 Desejo falar"];
+  const botScript: { text: string; quickReplies: string[] }[] = [
+    {
+      text: "Entendi. Em uma escala de 0 a 10, qual a intensidade da sua dor ou desconforto?",
+      quickReplies: ["0 - 3 (Leve)", "4 - 6 (Moderada)", "7 - 10 (Forte)", "Sem dor"],
+    },
+    {
+      text: "Obrigada. Há quanto tempo você está sentindo esses sintomas?",
+      quickReplies: ["Menos de 1 hora", "Algumas horas", "1 a 3 dias", "Mais de 1 semana"],
+    },
+    {
+      text: "Você está com febre, calafrios ou suor excessivo no momento?",
+      quickReplies: ["Sim, febre alta", "Febre baixa", "Apenas calafrios", "Não"],
+    },
+    {
+      text: "Você sente falta de ar, dor no peito ou tontura?",
+      quickReplies: ["Falta de ar", "Dor no peito", "Tontura", "Nenhum desses"],
+    },
+    {
+      text: "Você possui alguma condição de saúde pré-existente? (ex: diabetes, hipertensão, asma)",
+      quickReplies: ["Diabetes", "Hipertensão", "Asma", "Nenhuma"],
+    },
+    {
+      text: "Está fazendo uso de algum medicamento contínuo no momento?",
+      quickReplies: ["Sim, diariamente", "Apenas esporádico", "Não", "Prefiro não dizer"],
+    },
+    {
+      text: "Você tem alguma alergia conhecida a medicamentos ou alimentos?",
+      quickReplies: ["Sim, medicamentos", "Sim, alimentos", "Outras alergias", "Não tenho"],
+    },
+    {
+      text: "Com base nas suas respostas, sua triagem foi classificada como prioridade MODERADA (amarelo). Recomendo procurar atendimento na unidade mais próxima nas próximas 2 horas. Deseja que eu localize a UPA mais próxima?",
+      quickReplies: ["Sim, localizar UPA", "Falar com atendente", "Ligar para o SAMU", "Finalizar triagem"],
+    },
+    {
+      text: "Perfeito! Seu protocolo de triagem foi gerado: #SUSY-2026-0604. Encaminhei suas informações para a unidade. Deseja receber um resumo por SMS?",
+      quickReplies: ["Sim, enviar SMS", "Não, obrigado"],
+    },
+    {
+      text: "Triagem concluída com sucesso. Cuide-se bem! Em caso de piora, procure imediatamente uma emergência ou ligue 192 (SAMU).",
+      quickReplies: ["Iniciar nova triagem"],
+    },
+  ];
+
+  const quickReplies =
+    step === 0
+      ? ["Começou hoje", "Muitos dias", "Não tenho certeza", "🎙 Desejo falar"]
+      : botScript[step - 1]?.quickReplies ?? [];
 
   const sendMessage = (text: string) => {
     if (!text.trim()) return;
@@ -41,18 +88,22 @@ const Triagem = () => {
     setInput("");
     setIsTyping(true);
 
+    const nextBot = botScript[step];
+    const fallback = "Obrigada por compartilhar. Vou registrar essa informação no seu prontuário digital.";
+
     setTimeout(() => {
       setIsTyping(false);
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
-          text: "Entendi. Há quanto tempo você percebeu que a febre começou?",
+          text: nextBot ? nextBot.text : fallback,
           sender: "bot",
           time,
         },
       ]);
-    }, 2000);
+      setStep((s) => s + 1);
+    }, 1500);
   };
 
   return (
