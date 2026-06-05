@@ -1,35 +1,56 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Share2, CheckCircle2, Camera, FileText, Plus, Smile, Send, BotMessageSquare, History, HeadsetIcon } from "lucide-react";
+import {
+  addTriagemRecord,
+  buildPriorityLabel,
+  buildProtocol,
+  buildSummary,
+  classifyTriagem,
+  loadIdentification,
+  type PatientType,
+  type TriagemAnswer,
+  type TriagemMessage,
+  type TriagemClassification,
+} from "@/lib/triagem";
 
+interface Message extends TriagemMessage {}
 
-interface Message {
-  id: number;
-  text: string;
-  sender: "bot" | "user";
-  time: string;
-}
+const initialMessages: Message[] = [
+  {
+    id: 1,
+    text: "Olá, sou sua assistente digital de triagem. Para te ajudar melhor, preciso fazer algumas perguntas sobre seus sintomas.",
+    sender: "bot",
+    time: "14:02",
+  },
+  {
+    id: 2,
+    text: "Onde exatamente você está sentindo dor ou desconforto?",
+    sender: "bot",
+    time: "14:02",
+  },
+];
 
 const Triagem = () => {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: "Olá, sou sua assistente digital de triagem. Para te ajudar melhor, preciso fazer algumas perguntas sobre seus sintomas.",
-      sender: "bot",
-      time: "14:02",
-    },
-    {
-      id: 2,
-      text: "Onde exatamente você está sentindo dor ou desconforto?",
-      sender: "bot",
-      time: "14:02",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [step, setStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"triagem" | "historico" | "support">("triagem");
+  const [answers, setAnswers] = useState<TriagemAnswer[]>([]);
+  const [savedSession, setSavedSession] = useState(false);
+  const [patientType, setPatientType] = useState<PatientType>("eu");
+  const [cpf, setCpf] = useState("");
+  const [classification, setClassification] = useState<TriagemClassification>("VERDE");
+
+  useEffect(() => {
+    const saved = loadIdentification();
+    if (saved) {
+      setPatientType(saved.patientType);
+      setCpf(saved.cpf);
+    }
+  }, []);
 
   const botScript: { text: string; quickReplies: string[] }[] = [
     {
@@ -74,22 +95,173 @@ const Triagem = () => {
     },
   ];
 
-  const quickReplies =
-    step === 0
-      ? ["Começou hoje", "Muitos dias", "Não tenho certeza", "🎙 Desejo falar"]
-      : botScript[step - 1]?.quickReplies ?? [];
+  const normalizeAnswer = (answer: string) =>
+    answer
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .trim();
+
+  const contains = (value: string, terms: string[]) =>
+    terms.some((term) => value.includes(term));
+
+  const getBotResponse = (stepIndex: number, answer: string) => {
+    const normalized = normalizeAnswer(answer);
+
+    if (stepIndex === 0) {
+      if (contains(normalized, ["peito", "peitoral", "cardiaco", "cardiaca", "chest"])) {
+        return `Você mencionou "${answer}" no peito. Isso pode ser um sinal de atenção urgente. Em uma escala de 0 a 10, qual a intensidade?`;
+      }
+      if (contains(normalized, ["cabeca", "cabeça", "dor de cabeca", "migranea", "enxaqueca", "cefaleia"])) {
+        return `Anotado: "${answer}". Dor de cabeça pode ter várias causas. Em uma escala de 0 a 10, qual a intensidade?`;
+      }
+      if (contains(normalized, ["abdomen", "abdominal", "estomago", "barriga", "ventre"])) {
+        return `Obrigado. Você relatou "${answer}". Dor abdominal pode variar bastante. Em uma escala de 0 a 10, qual a intensidade?`;
+      }
+      if (contains(normalized, ["costas", "ombro", "braco", "braço", "perna", "joelho", "coluna"])) {
+        return `Entendi, você está sentindo desconforto em "${answer}". Em uma escala de 0 a 10, qual a intensidade?`;
+      }
+      return `Obrigado. Você relatou "${answer}". Agora, em uma escala de 0 a 10, qual a intensidade da sua dor ou desconforto?`;
+    }
+
+    if (stepIndex === 1) {
+      if (contains(normalized, ["7", "8", "9", "10", "forte", "intensa", "muito forte", "grave"])) {
+        return `Você disse "${answer}", o que indica dor intensa. Vou continuar a avaliação com prioridade mais alta.`;
+      }
+      if (contains(normalized, ["0", "1", "2", "3", "leve", "suave", "pequena"])) {
+        return `Dor leve registrada como "${answer}". Agora preciso saber há quanto tempo você sente esse sintoma.`;
+      }
+      return `Entendi que a intensidade foi "${answer}". Há quanto tempo você está com esse sintoma?`;
+    }
+
+    if (stepIndex === 2) {
+      if (contains(normalized, ["menos de 1 hora", "hoje", "pouco", "ultimas horas", "ultima hora"])) {
+        return `Sintomas recentes como "${answer}" podem evoluir rápido. Você está com febre, calafrios ou suor excessivo agora?`;
+      }
+      if (contains(normalized, ["1 a 3 dias", "mais de 1 semana", "algumas horas", "dias", "semanas", "muitos dias"])) {
+        return `Entendi, "${answer}" indica que o quadro já está presente há algum tempo. Você está com febre, calafrios ou suor excessivo agora?`;
+      }
+      return `Obrigado. Você disse "${answer}". Agora preciso saber se há febre, calafrios ou suor excessivo no momento.`;
+    }
+
+    if (stepIndex === 3) {
+      if (contains(normalized, ["sim", "febre", "calafrios", "suor", "suando", "quente"])) {
+        return `Anotado: "${answer}". Esses sinais podem indicar infecção ou inflamação. Você sente falta de ar, dor no peito ou tontura?`;
+      }
+      return `Certo, "${answer}" foi registrado. Mesmo assim, preciso saber se há falta de ar, dor no peito ou tontura.`;
+    }
+
+    if (stepIndex === 4) {
+      if (contains(normalized, ["falta de ar", "dor no peito", "tontura", "respiracao", "respiração", "vertigem", "mareado"])) {
+        return `Entendi: "${answer}". Isso pode elevar o nível de prioridade. Você possui alguma condição de saúde pré-existente?`;
+      }
+      return `Obrigado. Você disse "${answer}". Agora preciso confirmar se tem alguma condição de saúde pré-existente, como diabetes, hipertensão ou asma.`;
+    }
+
+    if (stepIndex === 5) {
+      if (contains(normalized, ["diabetes", "hipertensao", "hipertensão", "asma"])) {
+        return `Certo, "${answer}" registrado. Essas condições são importantes. Você faz uso de algum medicamento contínuo?`;
+      }
+      if (contains(normalized, ["nenhuma", "nao", "não", "nenhum"])) {
+        return `Entendido: "${answer}". Sem condições pré-existentes relatadas. Você faz uso de algum medicamento contínuo?`;
+      }
+      return `Obrigado, "${answer}" foi anotado. Você faz uso de algum medicamento contínuo?`;
+    }
+
+    if (stepIndex === 6) {
+      if (contains(normalized, ["sim", "diariamente", "controle", "remedio", "medicamento", "medicamentos", "antihipertensivo"])) {
+        return `Anotado: "${answer}". Vou considerar isso na recomendação. Você tem alguma alergia conhecida a medicamentos ou alimentos?`;
+      }
+      return `Entendido, "${answer}" foi registrado. Você tem alguma alergia conhecida a medicamentos ou alimentos?`;
+    }
+
+    if (stepIndex === 7) {
+      if (contains(normalized, ["samu", "192", "emergencia", "emergência", "urgente", "socorro", "hospital"])) {
+        return `Você escolheu "${answer}". Recomendo contato imediato com o SAMU e atendimento prioritário na unidade mais próxima.`;
+      }
+      if (contains(normalized, ["atendente", "falar", "suporte", "humano", "pessoa"])) {
+        return `Entendido, "${answer}". Vou direcionar você ao suporte humano para acompanhamento do caso.`;
+      }
+      if (contains(normalized, ["finalizar", "concluir", "nao", "não", "terminar"])) {
+        return `Ok, "${answer}" registrado. Vou finalizar sua triagem e preparar o protocolo.`;
+      }
+      return `Perfeito, "${answer}" registrado. Deseja receber um resumo por SMS?`;
+    }
+
+    if (stepIndex === 8) {
+      if (contains(normalized, ["sim", "sms", "resumo", "mensagem", "enviar"])) {
+        return `Resumo enviado por SMS com sucesso. Em caso de piora, procure atendimento imediatamente ou ligue 192 (SAMU).`;
+      }
+      return `Entendido, "${answer}" registrado. Triagem concluída com sucesso. Cuide-se bem!`;
+    }
+
+    return "Obrigada por compartilhar. Vou registrar essa informação no seu prontuário digital.";
+  };
+
+  const quickReplies = useMemo(() => {
+    if (step === 0) {
+      return ["Começou hoje", "Muitos dias", "Não tenho certeza", "🎙 Desejo falar"];
+    }
+
+    if (step < botScript.length) {
+      return botScript[step - 1]?.quickReplies ?? [];
+    }
+
+    return ["Iniciar nova triagem"];
+  }, [step]);
+
+  const isCompleted = step >= botScript.length && !isTyping;
+
+  useEffect(() => {
+    if (!isCompleted || savedSession || answers.length === 0) {
+      return;
+    }
+
+    const classification = classifyTriagem(answers);
+    setClassification(classification);
+    const protocol = buildProtocol();
+
+    addTriagemRecord({
+      id: protocol,
+      protocol,
+      createdAt: new Date().toISOString(),
+      patientType,
+      cpf,
+      classification,
+      priorityLabel: buildPriorityLabel(classification),
+      summary: buildSummary(classification),
+      answers,
+      messages,
+    });
+    setSavedSession(true);
+  }, [isCompleted, savedSession, answers, messages, patientType, cpf]);
+
+  const resetSession = () => {
+    setMessages(initialMessages);
+    setStep(0);
+    setAnswers([]);
+    setSavedSession(false);
+    setInput("");
+  };
 
   const sendMessage = (text: string) => {
     if (!text.trim()) return;
+
+    if (text === "Iniciar nova triagem") {
+      resetSession();
+      return;
+    }
+
     const now = new Date();
     const time = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+    const question = step === 0 ? initialMessages[1].text : botScript[step - 1]?.text ?? "Informação registrada";
 
     setMessages((prev) => [...prev, { id: Date.now(), text, sender: "user", time }]);
+    setAnswers((prev) => [...prev, { question, answer: text }]);
     setInput("");
     setIsTyping(true);
 
-    const nextBot = botScript[step];
-    const fallback = "Obrigada por compartilhar. Vou registrar essa informação no seu prontuário digital.";
+    const nextBot = getBotResponse(step, text);
 
     setTimeout(() => {
       setIsTyping(false);
@@ -97,7 +269,7 @@ const Triagem = () => {
         ...prev,
         {
           id: Date.now() + 1,
-          text: nextBot ? nextBot.text : fallback,
+          text: nextBot,
           sender: "bot",
           time,
         },
@@ -116,12 +288,23 @@ const Triagem = () => {
       </header>
 
       {/* Status */}
-      <div className="flex items-center justify-center gap-2 py-2 bg-card">
-        <span className="w-2 h-2 rounded-full bg-green-500" />
-        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-          Protocolo de Triagem Ativo
-        </span>
+      <div className="flex items-center justify-between gap-2 py-2 px-4 bg-card border-b border-border">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-green-500" />
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            Protocolo de Triagem Ativo
+          </span>
+        </div>
+        <div className="text-[10px] text-muted-foreground">
+          {cpf ? `CPF: ${cpf}` : "CPF não identificado"}
+        </div>
       </div>
+
+      {savedSession && (
+        <div className="mx-4 mt-4 rounded-2xl border border-success/40 bg-success/10 p-4 text-sm text-success">
+          Triagem salva como <strong>{classification}</strong>. Você pode acessar o histórico para rever os detalhes.
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">

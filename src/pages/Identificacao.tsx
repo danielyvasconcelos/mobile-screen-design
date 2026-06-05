@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Share2, CheckCircle2, User, Users, Info, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { loadIdentification, saveIdentification, type PatientType } from "@/lib/triagem";
 
 const Identificacao = () => {
-  const [tipo, setTipo] = useState<"eu" | "dependente">("eu");
+  const [tipo, setTipo] = useState<PatientType>("eu");
   const [cpf, setCpf] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const saved = loadIdentification();
+    if (saved) {
+      setTipo(saved.patientType);
+      setCpf(saved.cpf);
+    }
+  }, []);
 
   const formatCpf = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -13,6 +22,11 @@ const Identificacao = () => {
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  };
+
+  const handleContinue = () => {
+    saveIdentification({ cpf, patientType: tipo });
+    navigate("/triagem");
   };
 
   return (
@@ -94,7 +108,7 @@ const Identificacao = () => {
         {/* CTA */}
         <button
           disabled={cpf.replace(/\D/g, "").length === 0}
-          onClick={() => navigate("/triagem")}
+          onClick={handleContinue}
           className="w-full bg-primary text-primary-foreground font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform mt-6 disabled:opacity-40 disabled:pointer-events-none"
         >
           Verificar Dados <ArrowRight className="w-5 h-5" />
