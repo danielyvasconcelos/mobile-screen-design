@@ -13,6 +13,7 @@ import {
   type TriagemMessage,
   type TriagemClassification,
 } from "@/lib/triagem";
+import { findAnyNearbyUnits } from "@/lib/healthUnits";
 
 interface Message extends TriagemMessage {}
 
@@ -82,12 +83,12 @@ const Triagem = () => {
       quickReplies: ["Sim, medicamentos", "Sim, alimentos", "Outras alergias", "Não tenho"],
     },
     {
-      text: "Com base nas suas respostas, sua triagem foi classificada como prioridade MODERADA (amarelo). Recomendo procurar atendimento na unidade mais próxima nas próximas 2 horas. Deseja que eu localize a UPA mais próxima?",
-      quickReplies: ["Sim, localizar UPA", "Falar com atendente", "Ligar para o SAMU", "Finalizar triagem"],
+      text: "Com base nas suas respostas, sua triagem foi classificada como prioridade MODERADA (amarelo). Recomendo procurar atendimento na unidade mais próxima nas próximas 2 horas. Deseja que eu localize uma unidade de saúde para você?",
+      quickReplies: ["Sim, localizar", "Falar com atendente", "Ligar para o SAMU", "Finalizar triagem"],
     },
     {
-      text: "Perfeito! Seu protocolo de triagem foi gerado: #SUSY-2026-0604. Encaminhei suas informações para a unidade. Deseja receber um resumo por SMS?",
-      quickReplies: ["Sim, enviar SMS", "Não, obrigado"],
+      text: "Por favor, informe seu endereço ou bairro em Maceió. Vou indicar a UPA, hospital ou UBS/USF mais próximo com base nas unidades cadastradas.",
+      quickReplies: ["Jaraguá", "Tabuleiro do Martins", "Cidade Universitária", "Poço"],
     },
     {
       text: "Triagem concluída com sucesso. Cuide-se bem! Em caso de piora, procure imediatamente uma emergência ou ligue 192 (SAMU).",
@@ -104,6 +105,19 @@ const Triagem = () => {
 
   const contains = (value: string, terms: string[]) =>
     terms.some((term) => value.includes(term));
+
+  const buildLocationResponse = (query: string) => {
+    const units = findAnyNearbyUnits(query, 3);
+    if (units.length === 0) {
+      return `Não encontrei unidades próximas para "${query}". Tente outro bairro ou referência de Maceió.`;
+    }
+
+    const list = units
+      .map((unit) => `${unit.name} (${unit.type}) — ${unit.address}, ${unit.neighborhood}`)
+      .join("; ");
+
+    return `Com base em "${query}", as unidades mais próximas são: ${list}.`;
+  };
 
   const getBotResponse = (stepIndex: number, answer: string) => {
     const normalized = normalizeAnswer(answer);
@@ -177,22 +191,19 @@ const Triagem = () => {
 
     if (stepIndex === 7) {
       if (contains(normalized, ["samu", "192", "emergencia", "emergência", "urgente", "socorro", "hospital"])) {
-        return `Você escolheu "${answer}". Recomendo contato imediato com o SAMU e atendimento prioritário na unidade mais próxima.`;
+        return `Você escolheu "${answer}". Recomendo contato imediato com o SAMU e atendimento prioritário na unidade mais próxima. Agora, informe seu endereço ou bairro em Maceió para indicar unidades próximas.`;
       }
       if (contains(normalized, ["atendente", "falar", "suporte", "humano", "pessoa"])) {
-        return `Entendido, "${answer}". Vou direcionar você ao suporte humano para acompanhamento do caso.`;
+        return `Entendido, "${answer}". Vou direcionar você ao suporte humano. Enquanto isso, informe seu endereço ou bairro em Maceió para indicar a unidade mais próxima.`;
       }
       if (contains(normalized, ["finalizar", "concluir", "nao", "não", "terminar"])) {
-        return `Ok, "${answer}" registrado. Vou finalizar sua triagem e preparar o protocolo.`;
+        return `Certo, "${answer}" registrado. Antes de finalizar, informe seu endereço ou bairro em Maceió para indicar a unidade de saúde mais próxima.`;
       }
-      return `Perfeito, "${answer}" registrado. Deseja receber um resumo por SMS?`;
+      return `Qual seu endereço ou bairro em Maceió? Vou indicar a UPA, hospital ou UBS/USF mais próxima.`;
     }
 
     if (stepIndex === 8) {
-      if (contains(normalized, ["sim", "sms", "resumo", "mensagem", "enviar"])) {
-        return `Resumo enviado por SMS com sucesso. Em caso de piora, procure atendimento imediatamente ou ligue 192 (SAMU).`;
-      }
-      return `Entendido, "${answer}" registrado. Triagem concluída com sucesso. Cuide-se bem!`;
+      return buildLocationResponse(answer);
     }
 
     return "Obrigada por compartilhar. Vou registrar essa informação no seu prontuário digital.";

@@ -415,17 +415,18 @@ const Historico = () => {
         <div className="bg-card rounded-xl border border-border p-3 space-y-3">
           <img
             src={clinicBuilding}
-            alt="Unidade Sede da clínica"
+            alt="Hospital Geral do Estado (HGE)"
             loading="lazy"
             width={768}
             height={512}
             className="w-full h-36 object-cover rounded-lg"
           />
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-foreground">Unidade Sede</h3>
+            <h3 className="text-base font-bold text-foreground">Hospital Geral do Estado (HGE)</h3>
+            <p className="text-xs text-muted-foreground">Maior referência em urgência e emergência de Alagoas</p>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <MapPin className="w-3 h-3" />
-              <span>Av. da Saúde, 450 - Centro</span>
+              <span>Av. Siqueira Campos, 2095 - Trapiche da Barra</span>
             </div>
           </div>
           <button
