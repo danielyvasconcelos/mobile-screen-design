@@ -53,6 +53,16 @@ export function saveTriagemHistory(history: TriagemRecord[]) {
   window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 }
 
+export function deleteTriagemRecord(id: string) {
+  const history = loadTriagemHistory().filter((record) => record.id !== id);
+  saveTriagemHistory(history);
+}
+
+export function clearTriagemHistory() {
+  saveTriagemHistory([]);
+}
+
+
 export function addTriagemRecord(record: TriagemRecord) {
   const history = loadTriagemHistory();
   saveTriagemHistory([record, ...history]);
